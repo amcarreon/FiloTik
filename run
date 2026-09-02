@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+# run
+binary=./build/interpreter
+if [[ -f "$binary.exe" ]]; then
+  binary="$binary.exe"
+fi
+exec "$binary" "$@"
