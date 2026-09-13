@@ -58,7 +58,7 @@ Exit codes: 0 when file was scanned clean, 65 when scanner rejected the file bef
 
 
 ### Operators
-
+Precedence: 1=loosest
 
 | Operator | Category | Operands | Associativity | Precedence |
 |---|---|---|---|---|
@@ -87,7 +87,7 @@ Exit codes: 0 when file was scanned clean, 65 when scanner rejected the file bef
 ### Identifiers
 
 - Start characters: small or capital letters from A to Z
-- Continue characters: can contain numbers, letters, underscore
+- Continue characters: can contain numbers, letters, underscore (_)
 - Case-sensitive: no
 - Cannot contain reserved keywords and whitespaces
 - Cannot contain special characters (&, $, #, @, etc.), except underscore (_)
@@ -109,7 +109,7 @@ Exit codes: 0 when file was scanned clean, 65 when scanner rejected the file bef
 ## Token output format
 
 ```
-Token(type=NUMBER, lexeme=4, literal=4.0, line=1) 
+Token(type: TokenType.number, lexeme: 4, literal: 4.0, line: 1) 
 ```
 
 [What each field means. Frozen as of Lab 1; changes are recorded in the
@@ -118,8 +118,52 @@ changelog.]
 ## Grammar
 
 ```
-[Your complete context-free grammar, current as of the latest activity.
-Unambiguous, with precedence and associativity encoded in rule structure.]
+<program> ::= <function>*
+
+<function> ::= "avisala" <function_name> "(" ")" "{" <content_block>* "}"
+
+<function_name> ::= IDENTIFIER
+
+<function_call> ::= "yohoo" <function_name>
+
+<return> ::= "ohsimon" <expression>
+
+<content_block> ::= <assign_var> 
+                  | <function_call>
+                  | <conditional> 
+                  | <loop>
+                  | <loop_ctrl>
+                  | <print>
+                  | <return>
+
+<conditional> ::= <if_statement> <else-if_statement>* <else_statement>?
+
+<if_statement> ::= "pwede" "(" <condition> ")" "{" <content_block>"}"
+
+<else-if_statement> ::= "piro" "(" <condition> ")" "{" <content_block>"}"
+
+<else_statement> ::= "dipindi" "(" <condition> ")" "{" <content_block>"}"
+
+<loop> ::= <for_loop> | <while_loop>
+
+<for_loop> ::= "forda" "(" IDENTIFIER ":" <expression> ":" NUMBER ")" "{" <content_block>* "}" 
+
+<while_loop> ::= "whiletch" "(" <condition> ")" "{" <content_block>* "}"
+
+<loop_ctrl> ::= "aynakatulog" | "oops"
+
+<condition> ::= <expression> COMPARISON OPERATOR | LOGICAL OPERATOR <expression>
+
+<print> ::= "sabihinmona" "(" <expression> ")"
+
+<assign_var> ::= IDENTIFIER "=" <expression>
+
+<expression> ::= <term> (OPERATOR <term>)*
+
+<line_cmt> ::= "SKL:"
+
+<block_cmt> ::= "SKL:" "IYKYK"
+
 ```
 
 ## Parse output format
@@ -151,12 +195,12 @@ true.]
 
 ### Operator semantics
 
-- Arithmetic: 2 [operator] 3 , 2 + 3
-- `+` on strings: concatenation, "Uy!" + "Philippines" = "Uy!Philippines"
-- Mixed types: [what happens]
-- Comparison: <, <=, >, >=, ==
-- Equality across types: [false, or an error]
-- Division by zero: error
+- Arithmetic: number value [operator] number value, `2 + 3`
+- `+` on strings: concatenation, `"Uy!" + "Philippines" = "Uy!Philippines"`
+- Mixed types: If the operands have different types, such as number and word, it will return an error. `"depende kung" + 3`
+- Comparison: number value [operator] number value, `2 < 3`
+- Equality across types: Equality in numbers evaluates whether they are the same value. 
+- Division by zero: runtime error
 
 ### Scope and bindings
 
@@ -167,7 +211,7 @@ true.]
 
 ### Control flow and functions
 
-- Logical operators return: [booleans, or the operand]
+- Logical operators return: booleans
 - Dangling else binds to: [which if]
 - Closure capture of a loop variable: [per iteration, or shared]
 - Function with no return statement produces: [value]
