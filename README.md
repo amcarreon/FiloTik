@@ -1,2 +1,253 @@
-A sample command-line application with an entrypoint in `bin/`, library code
-in `lib/`, and example unit test in `test/`.
+# FiloTik
+
+## Creators
+
+- John Benedict B. Aparicio ([erratic-behaviour])
+- Angel Mae T. Carreon ([amcarreon])
+
+
+## Overview
+
+FiloTiknology (FiloTik) Language is a programming language designed specifically for Filipino netizens, and is inspired by Filipino online slang and TikTok humor vocal stims. The syntax is similar with Java and C, but has the readability of Python. This language aims to make programming understandable and fun despite having minimal technical knowledge. As long as you have spent time scrolling down the internet, you can code. “Kaka-cellphone mo’yan” finally pays off. No to doomscrolling, yes to code & scrolling.
+
+## Host language and build
+
+- Host language: Dart SDK version: 3.13.2
+- Version metadata: pubspec.yaml
+- Build: `./build.sh`
+- [Anything a fresh clone needs to know.]
+
+## Running it
+
+
+| Command | What it does |
+|---|---|
+| `./run <file>` | Executes a program. Available from Lab 4. |
+| `./run --tokenize <file>` | Prints the token stream. |
+| `./run --parse <file>` | Prints the parsed tree. |
+| `./run --eval <file>` | Evaluates each expression and prints its value. |
+| `./run` | Starts the REPL. |
+
+
+Exit codes: 0 when file was scanned clean, 65 when scanner rejected the file before running, 70 when the scan started then died.
+
+## File extension
+
+`.filo`
+
+## Lexical structure
+
+### Keywords
+
+
+| Keyword | Purpose |
+|---|---|
+| avisala | Function declaration |
+| yoohoo | Function call |
+| ohsimon | Returning a value from a function |
+| omsim | Boolean value: True |
+| nonsince | Boolean value: False |
+| pwidi, piro, dipindi | Conditional statements: if, else if, and else |
+| forda | For loops |
+| whiletch | While loops |
+| oops | Continue loop |
+| aynakatulog | Break loop |
+| imnida | Print statement |
+| sabihinmona | User input |
+| waley | null/None value |
+
+
+### Operators
+
+
+| Operator | Category | Operands | Associativity | Precedence |
+|---|---|---|---|---|
+| Parentheses (()) | grouping | - | none | 9 |
+| Logical NOT (mama_mo) | logical | unary | right | 8 |
+| Exponent (^) | arithmetic | binary | right | 7 |
+| Multiply (*), Divide (/), Modulo (%) | arithmetic | binary | left | 6 |
+| Add (+), Subtract (-) | arithmetic | binary | left | 5 |
+| Less than (<), Less than or equal (<=), More than (>), More than or equal (>=) | comparison | binary | left | 4 |
+| Equality (==), Inequality (!=) | comparison | binary | left | 3 |
+| Logical AND (at), Logical OR (o) | logical | binary | left | 2 |
+| Equals (=) | assignment | binary | right | 1 |
+
+
+### Literals
+
+
+| Kind | Syntax | Produces |
+|---|---|---|
+| number | 42 (int), 3.14 (double) | [what runtime value] |
+| string | "Uy, Philippines!" | [what runtime value] |
+| boolean | omsim = true, nonsince = false | [what runtime value] |
+| null/None | waley | [what runtime value] |
+
+
+### Identifiers
+
+- Start characters: small or capital letters from A to Z
+- Continue characters: can contain numbers, letters, underscore
+- Case-sensitive: no
+- Cannot contain reserved keywords and whitespaces
+- Cannot contain special characters (&, $, #, @, etc.), except underscore (_)
+
+### Comments
+
+- Line comments: `SKL: This is a line comment.`
+- Block comments: `SKL: This is a block comment. IYKYK`
+- Nesting: not supported
+- Harness note: comment_prefix in tests/lab*/manifest.json is set to the token above.
+
+## Whitespace and termination
+
+- Whitespace significant: no
+- Statement terminator: --
+- Block delimiters: curly braces
+- Grouping delimiters: parentheses
+
+## Token output format
+
+```
+Token(type=NUMBER, lexeme=4, literal=4.0, line=1) 
+```
+
+[What each field means. Frozen as of Lab 1; changes are recorded in the
+changelog.]
+
+## Grammar
+
+```
+[Your complete context-free grammar, current as of the latest activity.
+Unambiguous, with precedence and associativity encoded in rule structure.]
+```
+
+## Parse output format
+
+```
+[one line of real --parse output, e.g. (+ 1.0 (* 2.0 3.0))]
+```
+
+- Groupings print as: [form]
+- Numbers print as: [form]
+
+## Semantics
+
+### Values and types
+
+[What runtime values exist, and how they are represented in the host
+language.]
+
+### Value printing
+
+- Numbers: [e.g. 5 rather than 5.0]
+- Nil: [spelling]
+- Strings: [with or without quotes]
+
+### Truthiness
+
+[The complete rule. Which values are false in a condition; everything else is
+true.]
+
+### Operator semantics
+
+- Arithmetic: 2 [operator] 3 , 2 + 3
+- `+` on strings: concatenation, "Uy!" + "Philippines" = "Uy!Philippines"
+- Mixed types: [what happens]
+- Comparison: <, <=, >, >=, ==
+- Equality across types: [false, or an error]
+- Division by zero: error
+
+### Scope and bindings
+
+- Redeclaration in the same scope: [allowed or an error]
+- Uninitialized variable holds: [value]
+- Shadowing: [behavior]
+- Undefined name: [static error with exit 65, or runtime error with exit 70]
+
+### Control flow and functions
+
+- Logical operators return: [booleans, or the operand]
+- Dangling else binds to: [which if]
+- Closure capture of a loop variable: [per iteration, or shared]
+- Function with no return statement produces: [value]
+- Arity mismatch: [message and exit code]
+
+## Native functions
+
+
+| Name | Arguments | Returns | Notes |
+|---|---|---|---|
+| [name] | [count and types] | [type] | [caveats] |
+
+
+## Errors and diagnostics
+
+Message format:
+
+```
+[one real static error]
+[one real runtime error]
+```
+
+
+| Failure | Exit code |
+|---|---|
+| [lexical error] | 65 |
+| [syntax error] | 65 |
+| [runtime error] | 70 |
+
+
+## Testing conventions
+
+
+| Folder | Activity | Mode | Flag |
+|---|---|---|---|
+| tests/lab1 | Scanner | sidecar | `--tokenize` |
+| tests/lab2 | Parser | sidecar | `--parse` |
+| tests/lab3 | Evaluator | inline | `--eval` |
+| tests/lab4 | Context | inline | none |
+| tests/lab5 | Functions | inline | none |
+
+
+```
+[specific tests]...
+```
+
+Run locally with:
+
+```bash
+curl -sSL https://raw.githubusercontent.com/WhiteLicorice/cmsc-124-harness/v1.1/run_tests.py -o run_tests.py
+./build.sh
+python3 run_tests.py tests/lab1
+```
+
+## Sample code
+
+```
+[a short program]
+```
+
+Output:
+
+```
+[its output]
+```
+
+## Design rationale
+
+[Why the language is the way it is. Cover the choices that surprised you, the
+features you cut, and the decisions you reversed. Specific reasons, not
+approval of your own work.]
+
+## Known limitations
+
+- [What doesn't work, what is unimplemented, where behavior is worse than you
+  would like.]
+
+## Changelog
+
+
+| Activity | What changed in the language |
+|---|---|
+| Lab 1 | [entry] |
