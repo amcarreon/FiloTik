@@ -11,7 +11,7 @@ enum TokenType {
   bracketL,bracketR,
 
   // Arithmetic
-  add, sub, mult, div,
+  add, sub, mult, div, modulo, exponent,
 
   // Relational Operators
   equalEqual, notEqual, less, lessEqual, greater, greaterEqual, 
@@ -69,6 +69,8 @@ const Map<String, TokenType> Symbols = {
   "-": TokenType.sub,
   "*": TokenType.mult,
   "/": TokenType.div,
+  "%": TokenType.modulo,
+  "^": TokenType.exponent,
 
   // Relational Operators
   "==": TokenType.equalEqual,
