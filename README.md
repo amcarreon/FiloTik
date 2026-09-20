@@ -42,6 +42,7 @@ Exit codes: 0 when file was scanned clean, 65 when scanner rejected the file bef
 
 | Keyword | Purpose |
 |---|---|
+| ang| Var declaration|
 | avisala | Function declaration |
 | yoohoo | Function call |
 | ohsimon | Returning a value from a function |

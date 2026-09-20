@@ -11,7 +11,7 @@ enum TokenType {
   bracketL,bracketR,
 
   // Arithmetic
-  add, sub, mult, div,
+  add, sub, mult, div, modulo, exponent,
 
   // Relational Operators
   equalEqual, notEqual, less, lessEqual, greater, greaterEqual, 
@@ -69,6 +69,8 @@ const Map<String, TokenType> Symbols = {
   "-": TokenType.sub,
   "*": TokenType.mult,
   "/": TokenType.div,
+  "%": TokenType.modulo,
+  "^": TokenType.exponent,
 
   // Relational Operators
   "==": TokenType.equalEqual,
@@ -167,11 +169,13 @@ class Scanner {
     Scanner(this.source);
 
     void scanTokens(){
+        // start marks thee beginning of thee next token before scanning it
         while(!_isAtEnd()){
             start = column;
             scanToken();
         }
 
+        // EOF is added after every character in thee source has been checked
         tokens.add(Token(TokenType.termFile, '', null, line));
     }
 
@@ -197,6 +201,7 @@ class Scanner {
     }
 
     void _addToken(TokenType type, [Object? literal]){
+        // thee lexeme is thee exact source text, while literal is its converted value
         final lexeme = source.substring(start, column); 
         var token;
         if (type == TokenType.number_int || type == TokenType.number_float || type == TokenType.string){
@@ -210,7 +215,7 @@ class Scanner {
 
     void _scanSymbol(String character){
         switch(character){
-            // escapes and whitespace
+            // these charactrs do not createe tokens by themselves
             case ' ':
                 break;
             case '\r':
@@ -219,7 +224,7 @@ class Scanner {
             case '\n':
                 line++;
                 break;
-            // multi-character symbols
+            // a written \n is treated as a line break in the source
             case '\\':
                 if (_peek() == 'n') {
                     line++;
@@ -243,6 +248,7 @@ class Scanner {
                   _addToken(TokenType.termStatement);
                   break;
                 }
+                // if it iss not ;;, continue checking whether it starts a comment
             case ':':
                 if (_isAlphabet(_peek())) {
                   _scanIdentifier();
@@ -250,6 +256,7 @@ class Scanner {
                 }
             // others
             default:
+                // anything not recognized by the scanner is an error
                 final tokenType = Symbols[character];
                 if (tokenType != null) {
                   _addToken(tokenType, character);
@@ -266,6 +273,7 @@ class Scanner {
     }
 
     void _scanNumber(){
+        // keep reading so integers and decimals stay in one token
         while(_isDigit(_peek()) || _peek() == '.'){
             _advance();
         }
@@ -291,7 +299,7 @@ class Scanner {
         final keyword = Keywords[identifier];
 
         if (keyword == TokenType.commentMultiLineStart) {
-            // whilee we're not at th end, we ignore everything until we find the end of the comment
+            // ignore everything until thee block comment closing marker appears
             while (!_isAtEnd()) {
                 if (_peek() == ':' && source.substring(column, column + 6) == ':IYKYK') {
                     for (int i = 0; i < 6; i++) {
@@ -320,6 +328,7 @@ class Scanner {
     }
 
     void _scanString(){
+        // escaped quotes do not close thee string, so consume them as a pair
         while(_peek() != '"' && !_isAtEnd()){
             if(_peek() == '\\'){
                 _advance(); // consume the backslash
@@ -337,6 +346,7 @@ class Scanner {
         }
 
         if(_isAtEnd()){
+            // reaching EOF here means thee opening quote had no matching quote
             errorFlag = true;
             if (errorTypes.contains(2) == false) {
                 errorTypes.add(2);
@@ -344,6 +354,7 @@ class Scanner {
             errorLines.add((2, line, source.substring(start, column)));
         }else{
             _advance(); // consume closing "
+            // remove thee quotes and turn supported escape sequences into values
             var value = source.substring(start + 1, column - 1);
             value = value.replaceAll('\\"', '"');
             value = value.replaceAll('\\\\', '\\');
@@ -356,17 +367,20 @@ class Scanner {
     }
 
     String _peek() {
+        // look at the current character without moving the scanner
         if (_isAtEnd()) return '\u0000';
         return source.substring(column, column + 1);
     }
 
     String _advance() {
+        // return the current character, then move to the next one
         final character = source.substring(column, column + 1);
         column++;
         return character;
     }
 
     bool _match(String expected){
+        // check the current character and consume it only when it matches
         if (_isAtEnd()) return false;
         if (source[column] != expected) return false;
 
