@@ -1,2 +1,3 @@
-
-"hello" "with spaces" "quote: \"" "backslash: \\"
+"hello" "with spaces" 
+"quote: \"" \n
+"backslash: \\"

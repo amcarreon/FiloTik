@@ -20,7 +20,7 @@ enum TokenType {
   equal, not,
 
   // Types and null
-  identifier, string, number, typeNull,
+  identifier, string, number_int, number_float, typeNull,
 
   // Variable Declaration
   varDeclare,
@@ -141,9 +141,9 @@ class Token {
   @override
   String toString(){
     if (lexeme == '\n') {
-      return 'Token(type: $type, lexeme: \\n, literal: $literal, line: $line)';
+      return 'Token(type:$type, lexeme:\\n, literal:$literal, line:$line)';
     }
-    return 'Token(type: $type, lexeme: $lexeme, literal: $literal, line: $line)';
+    return 'Token(type:$type, lexeme:$lexeme, literal:$literal, line:$line)';
     }
 }
 
@@ -172,7 +172,7 @@ class Scanner {
             scanToken();
         }
 
-        tokens.add(Token(TokenType.termFile, 'EOF', null, line));
+        tokens.add(Token(TokenType.termFile, '', null, line));
     }
 
     void scanToken(){
@@ -197,20 +197,34 @@ class Scanner {
     }
 
     void _addToken(TokenType type, [Object? literal]){
-        final lexeme = source.substring(start, column);
-        final token = Token(type, lexeme, literal, line);
+        final lexeme = source.substring(start, column); 
+        var token;
+        if (type == TokenType.number_int || type == TokenType.number_float || type == TokenType.string){
+            token = Token(type, lexeme, literal, line);
+        }else{
+            token = Token(type, lexeme, null, line);
+        }
+        
         tokens.add(token);
     }
 
     void _scanSymbol(String character){
         switch(character){
+            // escapes and whitespace
             case ' ':
+                break;
             case '\r':
             case '\t':
                 break;
             case '\n':
                 line++;
-                _addToken(TokenType.termLine);
+                break;
+            // multi-character symbols
+            case '\\':
+                if (_peek() == 'n') {
+                    line++;
+                    _advance();
+                }
                 break;
             case '=':
                 _addToken(_match('=') ? TokenType.equalEqual : TokenType.equal, character);
@@ -234,6 +248,7 @@ class Scanner {
                   _scanIdentifier();
                   break;
                 }
+            // others
             default:
                 final tokenType = Symbols[character];
                 if (tokenType != null) {
@@ -251,14 +266,20 @@ class Scanner {
     }
 
     void _scanNumber(){
-        while(_isDigit(_peek())){
+        while(_isDigit(_peek()) || _peek() == '.'){
             _advance();
         }
-
+        
         final number = source.substring(start, column);
-        final value = double.tryParse(number);
-
-        _addToken(TokenType.number, value);
+        if (number.contains('.')){
+            final value = double.tryParse(number);
+            _addToken(TokenType.number_float, value);
+        }
+        else
+        {
+            final value = int.tryParse(number);
+            _addToken(TokenType.number_int, value);
+        }
     }
 
     void _scanIdentifier(){
@@ -270,6 +291,7 @@ class Scanner {
         final keyword = Keywords[identifier];
 
         if (keyword == TokenType.commentMultiLineStart) {
+            // whilee we're not at th end, we ignore everything until we find the end of the comment
             while (!_isAtEnd()) {
                 if (_peek() == ':' && source.substring(column, column + 6) == ':IYKYK') {
                     for (int i = 0; i < 6; i++) {
@@ -299,8 +321,19 @@ class Scanner {
 
     void _scanString(){
         while(_peek() != '"' && !_isAtEnd()){
-            if(_peek() == '\n') line++;
-            _advance();
+            if(_peek() == '\\'){
+                _advance(); // consume the backslash
+                if (_isAtEnd()) {
+                    break;
+                }
+                if (_peek() == 'n') line++;
+                if (_peek() == '"'); // quote escape
+                if (_peek() == '\\') ; // backslash escape
+                _advance();
+                
+            } else {
+                _advance();
+            }
         }
 
         if(_isAtEnd()){
@@ -311,7 +344,10 @@ class Scanner {
             errorLines.add((2, line, source.substring(start, column)));
         }else{
             _advance(); // consume closing "
-            final value = source.substring(start + 1, column - 1);
+            var value = source.substring(start + 1, column - 1);
+            value = value.replaceAll('\\"', '"');
+            value = value.replaceAll('\\\\', '\\');
+            value = value.replaceAll('\\n', '\n');
             _addToken(TokenType.string, value);
         }
 
@@ -350,6 +386,10 @@ class Scanner {
 
 }
 
+Never fail_scanner(String message) {
+  stderr.writeln('lab1: $message');
+  exit(65);
+}
 
 Never fail(String message) {
   stderr.writeln('lab0: $message');
@@ -371,8 +411,12 @@ void main(List<String> arguments) {
         scanner.scanTokens();
 
         for (final token in scanner.tokens) {
+            if (scanner.errorFlag == true){
+                break;
+            }
             stdout.writeln(token.toString());
         }
+
         if (scanner.errorFlag == true) {
           if (scanner.errorTypes.contains(1) == true) {
             stderr.writeln('lab1: unrecognized character(s) at line(s):');
@@ -381,6 +425,7 @@ void main(List<String> arguments) {
                 stderr.writeln('  ${error.$2}:${error.$3}');
               }
             }
+            fail_scanner('tokenization failed: unrecognized character(s)');
           }
           if (scanner.errorTypes.contains(2) == true) {
             stderr.writeln('lab1: unterminated string(s) at line(s):');
@@ -390,7 +435,7 @@ void main(List<String> arguments) {
               }
             }
           }
-          exit(65);
+          fail_scanner('tokenization failed: unterminated string(s)');
         }
     } on FileSystemException catch (error) {
       fail("cannot read '$path': ${error.message}");

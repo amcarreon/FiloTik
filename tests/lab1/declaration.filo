@@ -1,0 +1,5 @@
+ang myVariable = 5;;
+
+avisala myFunction() {
+    letsDoSomething
+}

@@ -1,0 +1,5 @@
+Token(type:TokenType.string, lexeme:"hello", literal:hello, line:1)
+Token(type:TokenType.string, lexeme:"with spaces", literal:with spaces, line:1)
+Token(type:TokenType.string, lexeme:"quote: \"", literal:quote: ", line:2)
+Token(type:TokenType.string, lexeme:"backslash: \\", literal:backslash: \, line:4)
+Token(type:TokenType.termFile, lexeme:, literal:null, line:5)

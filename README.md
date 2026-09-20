@@ -94,7 +94,7 @@ Precedence: 1=loosest
 
 ### Comments
 
-- Line comments: `SKL: This is a line comment.`
+- Line comments: `SKL; This is a line comment.`
 - Block comments: `SKL: This is a block comment. IYKYK`
 - Nesting: not supported
 - Harness note: comment_prefix in tests/lab*/manifest.json is set to the token above.
