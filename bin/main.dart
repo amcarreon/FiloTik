@@ -32,7 +32,7 @@ enum TokenType {
   repFor, repWhile, repContinue, repBreak,
 
   //functions
-  funcDeclare, funcReturn, funcPrint, funcScan,
+  funcDeclare, funcReturn, funcCall, funcPrint, funcScan,
 
   // logic
   logicAnd, logicOr, logicNot,
@@ -113,6 +113,7 @@ const Map<String, TokenType> Keywords = {
   // functions
   "avisala": TokenType.funcDeclare,
   "ohsimon": TokenType.funcReturn,
+  "yoohoo": TokenType.funcCall,
   "imnida": TokenType.funcPrint,
   "sabihinmona": TokenType.funcScan,
 
@@ -409,6 +410,7 @@ Never fail(String message) {
   stderr.writeln('lab0: $message');
   exit(65);
 }
+
 
 void main(List<String> arguments) {
   if (arguments.isEmpty) {
