@@ -22,17 +22,32 @@ enum TokenType {
   // Types and null
   identifier, string, number, typeNull,
 
+  // Variable Declaration
+  varDeclare,
+
   // conditionals
   condIf, condElse, condIfelse,
 
   // loops
-  repFor, repWhile,
-  
+  repFor, repWhile, repContinue, repBreak,
+
+  //functions
+  funcDeclare, funcReturn, funcPrint, funcScan,
+
+  // logic
+  logicAnd, logicOr, logicNot,
+
   // bools
   boolTrue, boolFalse,
 
+  // comments
+  commentLine, commentMultiLineStart, commentMultiLineEnd, commentMark,
+
   // EOF, Statemeent teerminator, 
   termFile, termStatement, termLine, 
+
+  // error types
+  unkCHAR, unterminatedString,
 }
 
 // symbols/lexemes for lookup
@@ -68,27 +83,51 @@ const Map<String, TokenType> Symbols = {
   "!": TokenType.not,
 
   // Statement terminators
-  "--": TokenType.termStatement,
+  ";;": TokenType.termStatement,
   "\n": TokenType.termLine,
 };
 
-// Keywords for lookup
+// Reserved identifiers for lookup
 const Map<String, TokenType> Keywords = {
   // Types and null
-  "null": TokenType.typeNull,
+  "waley": TokenType.typeNull,
+
+  // Variable Declaration
+  "ang": TokenType.varDeclare,
 
   // Conditionals
-  "if": TokenType.condIf,
-  "else": TokenType.condElse,
-  "ifelse": TokenType.condIfelse, // or "elif" / "elseif"
+  "pwidi": TokenType.condIf,
+  "dipindi": TokenType.condElse,
+  "piro": TokenType.condIfelse, 
 
   // Loops
-  "for": TokenType.repFor,
-  "while": TokenType.repWhile,
+  "forda": TokenType.repFor,
+  "whiletch": TokenType.repWhile,
+
+  // loop commands
+  "oops": TokenType.repContinue,
+  "aynakatulog": TokenType.repBreak,
+
+  // functions
+  "avisala": TokenType.funcDeclare,
+  "ohsimon": TokenType.funcReturn,
+  "imnida": TokenType.funcPrint,
+  "sabihinmona": TokenType.funcScan,
+
+  // logic
+  "at": TokenType.logicAnd,
+  "o": TokenType.logicOr,
+  "mama_mo": TokenType.logicNot,
+
+  // comment
+  "SKL;": TokenType.commentLine,
+  "SKL:": TokenType.commentMultiLineStart,
+  ":IYKYK": TokenType.commentMultiLineEnd,
+
 
   // Bools
-  "true": TokenType.boolTrue,
-  "false": TokenType.boolFalse,
+  "omsim": TokenType.boolTrue,
+  "nonsince": TokenType.boolFalse,
 };
 
 class Token {
@@ -119,6 +158,10 @@ class Scanner {
     int column = 0;
     int line = 1;
 
+    bool errorFlag = false;
+    List<int> errorTypes = []; 
+
+    List<(int, int, String)> errorLines = [];
     List<Token> tokens = [];
 
     Scanner(this.source);
@@ -181,16 +224,29 @@ class Scanner {
             case '>':
                 _addToken(_match('=') ? TokenType.greaterEqual : TokenType.greater, character);
                 break;
-            case '\\':
-                break;
-            default:
-                final symbol = Symbols[character];
-
-                if(symbol == null){
-                    fail("unexpected character '$character' at line:column $line:$column");
+            case ';':
+                if (_match(';')) {
+                  _addToken(TokenType.termStatement);
+                  break;
                 }
-
-                _addToken(symbol, character);
+            case ':':
+                if (_isAlphabet(_peek())) {
+                  _scanIdentifier();
+                  break;
+                }
+            default:
+                final tokenType = Symbols[character];
+                if (tokenType != null) {
+                  _addToken(tokenType, character);
+                  break;
+                }
+                errorFlag = true;
+                // (errorType, line, character)
+                errorLines.add((1,line, character));
+                if (errorTypes.contains(1) == false) {
+                  errorTypes.add(1);
+                }
+                _addToken(TokenType.unkCHAR, character);
         }
     }
 
@@ -206,12 +262,33 @@ class Scanner {
     }
 
     void _scanIdentifier(){
-        while(_isAlphabet(_peek()) || _isDigit(_peek())){
+        while(_isAlphabet(_peek()) || _isDigit(_peek()) || "_" == _peek() || ":" == _peek() || ";" == _peek()){
             _advance();
         }
 
         final identifier = source.substring(start, column);
         final keyword = Keywords[identifier];
+
+        if (keyword == TokenType.commentMultiLineStart) {
+            while (!_isAtEnd()) {
+                if (_peek() == ':' && source.substring(column, column + 6) == ':IYKYK') {
+                    for (int i = 0; i < 6; i++) {
+                        _advance();
+                    }
+                    break;
+                } else {
+                    if (_peek() == '\n') line++;
+                    _advance();
+                }
+            }
+            return;
+        }
+        if (keyword == TokenType.commentLine) {
+            while (_peek() != '\n' && !_isAtEnd()) {
+                _advance();
+            }
+            return;
+        }
 
         if(keyword != null){
             _addToken(keyword, identifier);
@@ -227,13 +304,19 @@ class Scanner {
         }
 
         if(_isAtEnd()){
-            fail("unterminated string at line:column $line:$column");
+            errorFlag = true;
+            if (errorTypes.contains(2) == false) {
+                errorTypes.add(2);
+            }
+            errorLines.add((2, line, source.substring(start, column)));
+        }else{
+            _advance(); // consume closing "
+            final value = source.substring(start + 1, column - 1);
+            _addToken(TokenType.string, value);
         }
 
-        _advance(); // consume closing "
 
-        final value = source.substring(start + 1, column - 1);
-        _addToken(TokenType.string, value);
+        
     }
 
     String _peek() {
@@ -289,6 +372,25 @@ void main(List<String> arguments) {
 
         for (final token in scanner.tokens) {
             stdout.writeln(token.toString());
+        }
+        if (scanner.errorFlag == true) {
+          if (scanner.errorTypes.contains(1) == true) {
+            stderr.writeln('lab1: unrecognized character(s) at line(s):');
+            for (final error in scanner.errorLines) {
+              if (error.$1 == 1) {
+                stderr.writeln('  ${error.$2}:${error.$3}');
+              }
+            }
+          }
+          if (scanner.errorTypes.contains(2) == true) {
+            stderr.writeln('lab1: unterminated string(s) at line(s):');
+            for (final error in scanner.errorLines) {
+              if (error.$1 == 2) {
+                stderr.writeln('  ${error.$2}:${error.$3}');
+              }
+            }
+          }
+          exit(65);
         }
     } on FileSystemException catch (error) {
       fail("cannot read '$path': ${error.message}");
