@@ -120,14 +120,14 @@ changelog.]
 ## Grammar
 
 ```
-expression  → logicalOR | logicalAND
-logicalOR   → equality (( “o” ) equality )*
+expression  → logicalOR
+logicalOR   → logicalAND (( “o” ) logicalAND )*
 logicalAND  → equality (( “at” ) equality )*
 equality    → comparison ( ( "!=" | "==" ) comparison )*
 comparison  → term ( ( ">" | ">=" | "<" | "<=" ) term )*
 term        → factor ( ( "-" | "+" ) factor )*
-factor      → unary ( ( "/" | "*" | “%” ) unary )*
-exponent    → unary ( ( “^” ) unary )*
+factor      → exponent ( ( "/" | "*" | “%” ) exponent )*
+exponent    → unary ( ( "^" ) exponent ) | unary
 unary       → ( "mama_mo" ) unary | primary
 primary     → NUMBER | STRING | "omsim" | "nonsince" | "waley" | "(" expression ")"
 ```
