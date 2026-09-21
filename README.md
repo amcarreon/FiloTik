@@ -63,15 +63,17 @@ Precedence: 1=loosest
 
 | Operator | Category | Operands | Associativity | Precedence |
 |---|---|---|---|---|
-| Parentheses (()) | grouping | - | none | 9 |
-| Logical NOT (mama_mo) | logical | unary | right | 8 |
-| Exponent (^) | arithmetic | binary | right | 7 |
-| Multiply (*), Divide (/), Modulo (%) | arithmetic | binary | left | 6 |
-| Add (+), Subtract (-) | arithmetic | binary | left | 5 |
-| Less than (<), Less than or equal (<=), More than (>), More than or equal (>=) | comparison | binary | left | 4 |
-| Equality (==), Inequality (!=) | comparison | binary | left | 3 |
-| Logical AND (at), Logical OR (o) | logical | binary | left | 2 |
+| Parentheses (()) | grouping | - | none | 10 |
+| Logical NOT (mama_mo) | logical | unary | right | 9 |
+| Exponent (^) | arithmetic | binary | right | 8 |
+| Multiply (*), Divide (/), Modulo (%) | arithmetic | binary | left | 7 |
+| Add (+), Subtract (-) | arithmetic | binary | left | 6 |
+| Less than (<), Less than or equal (<=), More than (>), More than or equal (>=) | comparison | binary | left | 5 |
+| Equality (==), Inequality (!=) | comparison | binary | left | 4 |
+| Logical AND (at) | logical | binary | left | 3 |
+| Logical OR (o) | logical | binary | left | 2 |
 | Equals (=) | assignment | binary | right | 1 |
+
 
 
 ### Literals
@@ -119,7 +121,19 @@ changelog.]
 ## Grammar
 
 ```
-<program> ::= <function>*
+expression  → logicalOR | logicalAND
+logicalOR   → equality (( “o” ) equality )*
+logicalAND  → equality (( “at” ) equality )*
+equality    → comparison ( ( "!=" | "==" ) comparison )*
+comparison  → term ( ( ">" | ">=" | "<" | "<=" ) term )*
+term        → factor ( ( "-" | "+" ) factor )*
+factor      → unary ( ( "/" | "*" | “%” ) unary )*
+exponent    → unary ( ( “^” ) unary )*
+unary       → ( "mama_mo" ) unary | primary
+primary     → NUMBER | STRING | "omsim" | "nonsince" | "waley" | "(" expression ")"
+```
+
+<!-- <program> ::= <function>*
 
 <function> ::= "avisala" <function_name> "(" ")" "{" <content_block>* "}"
 
@@ -163,14 +177,12 @@ changelog.]
 
 <line_cmt> ::= "SKL:"
 
-<block_cmt> ::= "SKL:" "IYKYK"
-
-```
+<block_cmt> ::= "SKL:" "IYKYK" -->
 
 ## Parse output format
 
 ```
-[one line of real --parse output, e.g. (+ 1.0 (* 2.0 3.0))]
+(+ 1.0 (* 2.0 3.0))
 ```
 
 - Groupings print as: [form]
@@ -238,9 +250,9 @@ Message format:
 
 | Failure | Exit code |
 |---|---|
-| [lexical error] | 65 |
-| [syntax error] | 65 |
-| [runtime error] | 70 |
+| lexical error | 65 |
+| syntax error | 65 |
+| runtime error | 70 |
 
 
 ## Testing conventions
@@ -256,7 +268,19 @@ Message format:
 
 
 ```
-[specific tests]...
+tests/lab0
+  tests/lab0/hello.bro
+
+tests/lab1
+  tests/lab1/strings
+    tests/lab1/strings/escapes.filo
+    tests/lab1/strings/unterminated.filo
+  tests/lab1/comments_at_eof.filo
+  tests/lab1/declaration.filo
+  tests/lab1/empty.filo
+  tests/lab1/keywords.filo
+  tests/lab1/numbers.filo
+  tests/lab1/operators.filo
 ```
 
 Run locally with:
@@ -295,4 +319,5 @@ approval of your own work.]
 
 | Activity | What changed in the language |
 |---|---|
-| Lab 1 | [entry] |
+| Lab 1 | added scanner |
+| Lab 2 | added grammar |
