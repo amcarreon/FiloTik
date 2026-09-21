@@ -408,13 +408,32 @@ class ParseError implements Exception {
 
 class Parser {
     final List<Token> tokens;
-    int start = 0;
-    int current;
-    
     Parser(this.tokens);
 
+    int current = 0;
+    
     // parsing for each token type
+    List<Stmt> parse() {
+        final stmts = <Stmt> [];
+        while (!isAtEnd()) {
+            stmts.add(declaration());
+        }
+        return stmts;
+    }
 
+    Stmt declaration() {
+        if (match([TokenType.varDeclare])) return varDeclare();
+        throw ParseError(peek(), 'expects declaration');
+    }
+
+    // variable declaration
+    Stmt varDeclare() {
+        
+    }
+
+    // expression => primary
+
+    // primary number literals
 
     // helper functions
     Token peek() => tokens[current]; // reading current token, not consumed
@@ -432,13 +451,19 @@ class Parser {
 
     bool isAtEnd() => peek().type == TokenType.termFile; // EOF
 
-    bool check(type) {
+    bool check(TokenType type) {
         if (isAtEnd()) return false;
         return peek().type == type;
     }
 
     bool match(List<TokenType> types) {
-        // consumes if match
+        for (final type in types) {
+            if (check(type)) {
+                advance();
+                return true;
+            }
+        }
+        return false;
     }
 }
 
