@@ -43,7 +43,7 @@ enum TokenType {
   // comments
   commentLine, commentMultiLineStart, commentMultiLineEnd, commentMark,
 
-  // EOF, Statemeent teerminator, 
+  // EOF, Statement terminator, 
   termFile, termStatement, termLine, 
 
   // error types
@@ -398,8 +398,50 @@ class Scanner {
         return character.codeUnits.first >= '0'.codeUnits.first && character.codeUnits.first<= '9'.codeUnits.first;
     }
     bool _isAtEnd(){return column >= source.length;}
-
 }
+
+// error handling
+class ParseError implements Exception {
+    final Token token; final String message;
+    ParseError(this.token, this.message);
+}
+
+class Parser {
+    final List<Token> tokens;
+    int start = 0;
+    int current;
+    
+    Parser(this.tokens);
+
+    // parsing for each token type
+
+
+    // helper functions
+    Token peek() => tokens[current]; // reading current token, not consumed
+
+    Token advance() {
+        token = peek();
+        if (!isAtEnd()) current++;
+        return token;
+    }
+
+    Token consume(TokenType type, String message) {
+       if (check(type)) return advance();
+       throw ParseError(peek(), messsage);
+    }
+
+    bool isAtEnd() => peek().type == TokenType.termFile; // EOF
+
+    bool check(type) {
+        if (isAtEnd()) return false;
+        return peek().type == type;
+    }
+
+    bool match(List<TokenType> types) {
+        // consumes if match
+    }
+}
+
 
 Never fail_scanner(String message) {
   stderr.writeln('lab1: $message');
@@ -462,6 +504,19 @@ void main(List<String> arguments) {
     stdout.write(source);
     } on FileSystemException catch (error) {
       fail("cannot read '$path': ${error.message}");
+    }
+  }
+
+  if (command == "--parse") {
+    try {
+        final src = Parser(scanner.tokens).parse();
+        for (final tokens in src) {
+            stdout.writeln(printStmt(tokens));
+        }
+    } on ParseError catch (error) {
+        stderr.writeln('lab2: line ${error.token.line}: ${error.message}');
+    } on FileSystemException catch (error) {
+        fail ("cannot read '$path': ${error.message}");
     }
   }
 
