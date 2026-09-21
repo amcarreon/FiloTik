@@ -63,15 +63,17 @@ Precedence: 1=loosest
 
 | Operator | Category | Operands | Associativity | Precedence |
 |---|---|---|---|---|
-| Parentheses (()) | grouping | - | none | 9 |
-| Logical NOT (mama_mo) | logical | unary | right | 8 |
-| Exponent (^) | arithmetic | binary | right | 7 |
-| Multiply (*), Divide (/), Modulo (%) | arithmetic | binary | left | 6 |
-| Add (+), Subtract (-) | arithmetic | binary | left | 5 |
-| Less than (<), Less than or equal (<=), More than (>), More than or equal (>=) | comparison | binary | left | 4 |
-| Equality (==), Inequality (!=) | comparison | binary | left | 3 |
-| Logical AND (at), Logical OR (o) | logical | binary | left | 2 |
+| Parentheses (()) | grouping | - | none | 10 |
+| Logical NOT (mama_mo) | logical | unary | right | 9 |
+| Exponent (^) | arithmetic | binary | right | 8 |
+| Multiply (*), Divide (/), Modulo (%) | arithmetic | binary | left | 7 |
+| Add (+), Subtract (-) | arithmetic | binary | left | 6 |
+| Less than (<), Less than or equal (<=), More than (>), More than or equal (>=) | comparison | binary | left | 5 |
+| Equality (==), Inequality (!=) | comparison | binary | left | 4 |
+| Logical AND (at) | logical | binary | left | 3 |
+| Logical OR (o) | logical | binary | left | 2 |
 | Equals (=) | assignment | binary | right | 1 |
+
 
 
 ### Literals
