@@ -43,7 +43,7 @@ enum TokenType {
   // comments
   commentLine, commentMultiLineStart, commentMultiLineEnd, commentMark,
 
-  // EOF, Statemeent teerminator, 
+  // EOF, Statement terminator, 
   termFile, termStatement, termLine, 
 
   // error types
@@ -398,8 +398,75 @@ class Scanner {
         return character.codeUnits.first >= '0'.codeUnits.first && character.codeUnits.first<= '9'.codeUnits.first;
     }
     bool _isAtEnd(){return column >= source.length;}
-
 }
+
+// error handling
+class ParseError implements Exception {
+    final Token token; final String message;
+    ParseError(this.token, this.message);
+}
+
+class Parser {
+    final List<Token> tokens;
+    Parser(this.tokens);
+
+    int current = 0;
+    
+    // parsing for each token type
+    List<Stmt> parse() {
+        final stmts = <Stmt> [];
+        while (!isAtEnd()) {
+            stmts.add(declaration());
+        }
+        return stmts;
+    }
+
+    Stmt declaration() {
+        if (match([TokenType.varDeclare])) return varDeclare();
+        throw ParseError(peek(), 'expects declaration');
+    }
+
+    // variable declaration
+    Stmt varDeclare() {
+        
+    }
+
+    // expression => primary
+
+    // primary number literals
+
+    // helper functions
+    Token peek() => tokens[current]; // reading current token, not consumed
+
+    Token advance() {
+        token = peek();
+        if (!isAtEnd()) current++;
+        return token;
+    }
+
+    Token consume(TokenType type, String message) {
+       if (check(type)) return advance();
+       throw ParseError(peek(), messsage);
+    }
+
+    bool isAtEnd() => peek().type == TokenType.termFile; // EOF
+
+    bool check(TokenType type) {
+        if (isAtEnd()) return false;
+        return peek().type == type;
+    }
+
+    bool match(List<TokenType> types) {
+        for (final type in types) {
+            if (check(type)) {
+                advance();
+                return true;
+            }
+        }
+        return false;
+    }
+}
+
 
 Never fail_scanner(String message) {
   stderr.writeln('lab1: $message');
@@ -462,6 +529,19 @@ void main(List<String> arguments) {
     stdout.write(source);
     } on FileSystemException catch (error) {
       fail("cannot read '$path': ${error.message}");
+    }
+  }
+
+  if (command == "--parse") {
+    try {
+        final src = Parser(scanner.tokens).parse();
+        for (final tokens in src) {
+            stdout.writeln(printStmt(tokens));
+        }
+    } on ParseError catch (error) {
+        stderr.writeln('lab2: line ${error.token.line}: ${error.message}');
+    } on FileSystemException catch (error) {
+        fail ("cannot read '$path': ${error.message}");
     }
   }
 

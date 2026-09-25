@@ -121,7 +121,9 @@ changelog.]
 ## Grammar
 
 ```
-expression  → logicalOR
+function    → "avisala" IDENTIFIER ( var_declare )*
+var_declare → "ang" IDENTIFIER ( "=" expression)?
+expression  → logicalOR 
 logicalOR   → logicalAND (( “o” ) logicalAND )*
 logicalAND  → equality (( “at” ) equality )*
 equality    → comparison ( ( "!=" | "==" ) comparison )*
@@ -130,7 +132,7 @@ term        → factor ( ( "-" | "+" ) factor )*
 factor      → exponent ( ( "/" | "*" | “%” ) exponent )*
 exponent    → unary ( ( "^" ) exponent ) | unary
 unary       → ( "mama_mo" ) unary | primary
-primary     → NUMBER | STRING | "omsim" | "nonsince" | "waley" | "(" expression ")"
+primary     → NUMBER | STRING | IDENTIFIER |  "omsim" | "nonsince" | "waley" | "(" expression ")"
 ```
 
 <!-- <program> ::= <function>*
