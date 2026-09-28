@@ -572,9 +572,10 @@ void run(String source) {
 
         for (final token in scanner.tokens) {
             if (scanner.errorFlag == true){
+                if (token.type == TokenType.termFile) break;
                 stdout.writeln(token.toString());
-                break;
             }
+            
             stdout.writeln(token.toString()); // print tokens
         }
 
