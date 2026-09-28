@@ -492,36 +492,7 @@ void main(List<String> arguments) {
   if (command == '--tokenize'){
     try {
     final source = File(path).readAsStringSync(encoding: utf8); 
-        final scanner = Scanner(source);
-        scanner.scanTokens();
-
-        for (final token in scanner.tokens) {
-            if (scanner.errorFlag == true){
-                break;
-            }
-            stdout.writeln(token.toString());
-        }
-
-        if (scanner.errorFlag == true) {
-          if (scanner.errorTypes.contains(1) == true) {
-            stderr.writeln('lab1: unrecognized character(s) at line(s):');
-            for (final error in scanner.errorLines) {
-              if (error.$1 == 1) {
-                stderr.writeln('  ${error.$2}:${error.$3}');
-              }
-            }
-            fail_scanner('tokenization failed: unrecognized character(s)');
-          }
-          if (scanner.errorTypes.contains(2) == true) {
-            stderr.writeln('lab1: unterminated string(s) at line(s):');
-            for (final error in scanner.errorLines) {
-              if (error.$1 == 2) {
-                stderr.writeln('  ${error.$2}:${error.$3}');
-              }
-            }
-          }
-          fail_scanner('tokenization failed: unterminated string(s)');
-        }
+        run(source, false);
     } on FileSystemException catch (error) {
       fail("cannot read '$path': ${error.message}");
     }
@@ -546,7 +517,7 @@ void main(List<String> arguments) {
 //         fail ("cannot read '$path': ${error.message}");
 //     }
 //   }
-  
+  exit(0);
 }
 
 // running the REPL
@@ -561,11 +532,11 @@ void runrepl() {
             break; // EOF
         }
 
-        run(line);        
+        run(line, true);        
     }
 }
 
-void run(String source) {
+void run(String source, bool replMode) {
     try {
         final scanner = Scanner(source);
         scanner.scanTokens();
@@ -581,22 +552,27 @@ void run(String source) {
         }
 
         if (scanner.errorFlag == true) {
+            String errorMessage = '';
             if (scanner.errorTypes.contains(1) == true) {
-                stderr.write('lab1: unrecognized character(s) at line');
+                errorMessage = 'lab1: unrecognized character(s) at line';
                 for (final error in scanner.errorLines) {
-                if (error.$1 == 1) {
-                    stderr.writeln(' ${error.$2}:${error.$3}');
+                    if (error.$1 == 1) {
+                        stderr.writeln(' ${error.$2}:${error.$3}');
+                    }
                 }
             }
-        }
             if (scanner.errorTypes.contains(2) == true) {
-                stderr.write('lab1: unterminated string(s) at line');
+                errorMessage = 'lab1: unterminated string(s) at line';
                 for (final error in scanner.errorLines) {
                     if (error.$1 == 2) {
                         stderr.writeln(' ${error.$2}:${error.$3}');
                     }
                 }
             }
+            if (replMode == false){
+                fail_scanner(errorMessage);
+            }
+
         }      
     } catch (error) {
         stderr.writeln('lab1: $error');

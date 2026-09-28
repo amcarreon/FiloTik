@@ -1,0 +1,3 @@
+Token(type:TokenType.varDeclare, lexeme:ang, literal:null, line:1)
+Token(type:TokenType.identifier, lexeme:ThisIsBroken, literal:null, line:1)
+Token(type:TokenType.equal, lexeme:=, literal:null, line:1)
