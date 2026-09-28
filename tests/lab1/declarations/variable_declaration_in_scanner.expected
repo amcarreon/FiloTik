@@ -1,0 +1,6 @@
+Token(type:TokenType.varDeclare, lexeme:ang, literal:null, line:1)
+Token(type:TokenType.identifier, lexeme:myVariable, literal:null, line:1)
+Token(type:TokenType.equal, lexeme:=, literal:null, line:1)
+Token(type:TokenType.number_int, lexeme:5, literal:5, line:1)
+Token(type:TokenType.termStatement, lexeme:;;, literal:null, line:1)
+Token(type:TokenType.termFile, lexeme:, literal:null, line:1)

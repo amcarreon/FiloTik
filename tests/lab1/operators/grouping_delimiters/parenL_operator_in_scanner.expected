@@ -1,0 +1,2 @@
+Token(type:TokenType.parenL, lexeme:(, literal:null, line:1)
+Token(type:TokenType.termFile, lexeme:, literal:null, line:1)
