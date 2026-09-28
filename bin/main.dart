@@ -574,9 +574,10 @@ void run(String source) {
             if (scanner.errorFlag == true){
                 if (token.type == TokenType.termFile) break;
                 stdout.writeln(token.toString());
+            } else {
+                stdout.writeln(token.toString()); // print tokens
             }
             
-            stdout.writeln(token.toString()); // print tokens
         }
 
         if (scanner.errorFlag == true) {
