@@ -1,0 +1,6 @@
+Token(type:TokenType.number_int, lexeme:0, literal:0, line:1)
+Token(type:TokenType.number_int, lexeme:3, literal:3, line:1)
+Token(type:TokenType.number_int, lexeme:6, literal:6, line:1)
+Token(type:TokenType.number_int, lexeme:42, literal:42, line:1)
+Token(type:TokenType.number_int, lexeme:123, literal:123, line:1)
+Token(type:TokenType.termFile, lexeme:, literal:null, line:2)

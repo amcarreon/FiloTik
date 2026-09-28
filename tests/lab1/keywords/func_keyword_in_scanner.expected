@@ -1,0 +1,6 @@
+Token(type:TokenType.funcDeclare, lexeme:avisala, literal:null, line:1)
+Token(type:TokenType.funcCall, lexeme:yoohoo, literal:null, line:1)
+Token(type:TokenType.funcReturn, lexeme:ohsimon, literal:null, line:1)
+Token(type:TokenType.funcPrint, lexeme:imnida, literal:null, line:1)
+Token(type:TokenType.funcScan, lexeme:sabihinmona, literal:null, line:1)
+Token(type:TokenType.termFile, lexeme:, literal:null, line:1)

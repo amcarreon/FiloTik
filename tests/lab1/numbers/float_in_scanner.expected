@@ -1,0 +1,7 @@
+Token(type:TokenType.number_float, lexeme:3.14, literal:3.14, line:1)
+Token(type:TokenType.number_float, lexeme:5.23, literal:5.23, line:1)
+Token(type:TokenType.number_float, lexeme:9.8, literal:9.8, line:1)
+Token(type:TokenType.number_float, lexeme:1.000000, literal:1.0, line:1)
+Token(type:TokenType.number_float, lexeme:2.0, literal:2.0, line:1)
+Token(type:TokenType.number_float, lexeme:6., literal:6.0, line:1)
+Token(type:TokenType.termFile, lexeme:, literal:null, line:2)

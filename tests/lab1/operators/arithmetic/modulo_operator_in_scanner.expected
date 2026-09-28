@@ -1,0 +1,2 @@
+Token(type:TokenType.modulo, lexeme:%, literal:null, line:1)
+Token(type:TokenType.termFile, lexeme:, literal:null, line:1)

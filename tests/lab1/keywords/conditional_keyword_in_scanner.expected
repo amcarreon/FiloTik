@@ -1,0 +1,4 @@
+Token(type:TokenType.condIf, lexeme:pwidi, literal:null, line:1)
+Token(type:TokenType.condElse, lexeme:dipindi, literal:null, line:1)
+Token(type:TokenType.condIfelse, lexeme:piro, literal:null, line:1)
+Token(type:TokenType.termFile, lexeme:, literal:null, line:1)

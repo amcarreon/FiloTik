@@ -1,0 +1,5 @@
+Token(type:TokenType.identifier, lexeme:new, literal:null, line:1)
+Token(type:TokenType.identifier, lexeme:line, literal:null, line:1)
+Token(type:TokenType.string, lexeme:"next is string", literal:next is string, line:2)
+Token(type:TokenType.identifier, lexeme:hi, literal:null, line:5)
+Token(type:TokenType.termFile, lexeme:, literal:null, line:7)

@@ -1,0 +1,4 @@
+Token(type:TokenType.logicAnd, lexeme:at, literal:null, line:1)
+Token(type:TokenType.logicOr, lexeme:o, literal:null, line:1)
+Token(type:TokenType.logicNot, lexeme:mama_mo, literal:null, line:1)
+Token(type:TokenType.termFile, lexeme:, literal:null, line:1)
