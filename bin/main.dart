@@ -401,71 +401,71 @@ class Scanner {
 }
 
 // error handling
-class ParseError implements Exception {
-    final Token token; final String message;
-    ParseError(this.token, this.message);
-}
+// class ParseError implements Exception {
+//     final Token token; final String message;
+//     ParseError(this.token, this.message);
+// }
 
-class Parser {
-    final List<Token> tokens;
-    Parser(this.tokens);
+// class Parser {
+//     final List<Token> tokens;
+//     Parser(this.tokens);
 
-    int current = 0;
+//     int current = 0;
     
-    // parsing for each token type
-    List<Stmt> parse() {
-        final stmts = <Stmt> [];
-        while (!isAtEnd()) {
-            stmts.add(declaration());
-        }
-        return stmts;
-    }
+//     // parsing for each token type
+//     List<Stmt> parse() {
+//         final stmts = <Stmt> [];
+//         while (!isAtEnd()) {
+//             stmts.add(declaration());
+//         }
+//         return stmts;
+//     }
 
-    Stmt declaration() {
-        if (match([TokenType.varDeclare])) return varDeclare();
-        throw ParseError(peek(), 'expects declaration');
-    }
+//     Stmt declaration() {
+//         if (match([TokenType.varDeclare])) return varDeclare();
+//         throw ParseError(peek(), 'expects declaration');
+//     }
 
-    // variable declaration
-    Stmt varDeclare() {
+//     // variable declaration
+//     Stmt varDeclare() {
         
-    }
+//     }
 
-    // expression => primary
+//     // expression => primary
 
-    // primary number literals
+//     // primary number literals
 
-    // helper functions
-    Token peek() => tokens[current]; // reading current token, not consumed
+//     // helper functions
+//     Token peek() => tokens[current]; // reading current token, not consumed
 
-    Token advance() {
-        token = peek();
-        if (!isAtEnd()) current++;
-        return token;
-    }
+//     Token advance() {
+//         token = peek();
+//         if (!isAtEnd()) current++;
+//         return token;
+//     }
 
-    Token consume(TokenType type, String message) {
-       if (check(type)) return advance();
-       throw ParseError(peek(), messsage);
-    }
+//     Token consume(TokenType type, String message) {
+//        if (check(type)) return advance();
+//        throw ParseError(peek(), messsage);
+//     }
 
-    bool isAtEnd() => peek().type == TokenType.termFile; // EOF
+//     bool isAtEnd() => peek().type == TokenType.termFile; // EOF
 
-    bool check(TokenType type) {
-        if (isAtEnd()) return false;
-        return peek().type == type;
-    }
+//     bool check(TokenType type) {
+//         if (isAtEnd()) return false;
+//         return peek().type == type;
+//     }
 
-    bool match(List<TokenType> types) {
-        for (final type in types) {
-            if (check(type)) {
-                advance();
-                return true;
-            }
-        }
-        return false;
-    }
-}
+//     bool match(List<TokenType> types) {
+//         for (final type in types) {
+//             if (check(type)) {
+//                 advance();
+//                 return true;
+//             }
+//         }
+//         return false;
+//     }
+// }
 
 
 Never fail_scanner(String message) {
@@ -481,7 +481,9 @@ Never fail(String message) {
 
 void main(List<String> arguments) {
   if (arguments.isEmpty) {
-    fail('expected one source-file path');
+    // fail('expected one source-file path');
+    runrepl();
+    return;
   }
 
   final path = arguments.last;
@@ -532,18 +534,69 @@ void main(List<String> arguments) {
     }
   }
 
-  if (command == "--parse") {
-    try {
-        final src = Parser(scanner.tokens).parse();
-        for (final tokens in src) {
-            stdout.writeln(printStmt(tokens));
-        }
-    } on ParseError catch (error) {
-        stderr.writeln('lab2: line ${error.token.line}: ${error.message}');
-    } on FileSystemException catch (error) {
-        fail ("cannot read '$path': ${error.message}");
-    }
-  }
-
+//   if (command == "--parse") {
+//     try {
+//         final src = Parser(scanner.tokens).parse();
+//         for (final tokens in src) {
+//             stdout.writeln(printStmt(tokens));
+//         }
+//     } on ParseError catch (error) {
+//         stderr.writeln('lab2: line ${error.token.line}: ${error.message}');
+//     } on FileSystemException catch (error) {
+//         fail ("cannot read '$path': ${error.message}");
+//     }
+//   }
   
+}
+
+// running the REPL
+void runrepl() {
+    
+    for(;;) {
+        stdout.write('> ');
+        final line = stdin.readLineSync(encoding: utf8);
+
+        if (line == null || line.trim() == ".exitrepl") {
+            stdout.writeln();
+            break; // EOF
+        }
+
+        run(line);        
+    }
+}
+
+void run(String source) {
+    try {
+        final scanner = Scanner(source);
+        scanner.scanTokens();
+
+        for (final token in scanner.tokens) {
+            if (scanner.errorFlag == true){
+                stdout.writeln(token.toString());
+                break;
+            }
+            stdout.writeln(token.toString()); // print tokens
+        }
+
+        if (scanner.errorFlag == true) {
+            if (scanner.errorTypes.contains(1) == true) {
+                stderr.writeln('lab1: unrecognized character(s) at line(s):');
+                for (final error in scanner.errorLines) {
+                if (error.$1 == 1) {
+                    stderr.writeln('  ${error.$2}:${error.$3}');
+                }
+            }
+        }
+            if (scanner.errorTypes.contains(2) == true) {
+                stderr.writeln('lab1: unterminated string(s) at line(s):');
+                for (final error in scanner.errorLines) {
+                    if (error.$1 == 2) {
+                        stderr.writeln('  ${error.$2}:${error.$3}');
+                    }
+                }
+            }
+        }      
+    } catch (error) {
+        stderr.writeln('lab1: $error');
+    }
 }
