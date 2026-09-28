@@ -582,18 +582,18 @@ void run(String source) {
 
         if (scanner.errorFlag == true) {
             if (scanner.errorTypes.contains(1) == true) {
-                stderr.writeln('lab1: unrecognized character(s) at line(s):');
+                stderr.write('lab1: unrecognized character(s) at line');
                 for (final error in scanner.errorLines) {
                 if (error.$1 == 1) {
-                    stderr.writeln('  ${error.$2}:${error.$3}');
+                    stderr.writeln(' ${error.$2}:${error.$3}');
                 }
             }
         }
             if (scanner.errorTypes.contains(2) == true) {
-                stderr.writeln('lab1: unterminated string(s) at line(s):');
+                stderr.write('lab1: unterminated string(s) at line');
                 for (final error in scanner.errorLines) {
                     if (error.$1 == 2) {
-                        stderr.writeln('  ${error.$2}:${error.$3}');
+                        stderr.writeln(' ${error.$2}:${error.$3}');
                     }
                 }
             }
