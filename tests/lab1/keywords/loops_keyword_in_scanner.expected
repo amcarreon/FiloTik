@@ -1,0 +1,5 @@
+Token(type:TokenType.repFor, lexeme:forda, literal:null, line:1)
+Token(type:TokenType.repWhile, lexeme:whiletch, literal:null, line:1)
+Token(type:TokenType.repContinue, lexeme:oops, literal:null, line:1)
+Token(type:TokenType.repBreak, lexeme:aynakatulog, literal:null, line:1)
+Token(type:TokenType.termFile, lexeme:, literal:null, line:1)
