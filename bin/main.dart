@@ -3,7 +3,7 @@ import 'dart:io';
 
 import 'token.dart';
 import 'scanner.dart';
-import 'parser.dart';
+// import 'parser.dart';
 
 
 Never fail_scanner(String message) {
