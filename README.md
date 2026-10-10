@@ -55,7 +55,10 @@ Exit codes: 0 when file was scanned clean, 65 when scanner rejected the file bef
 | aynakatulog | Break loop |
 | imnida | Print statement |
 | sabihinmona | User input |
-| waley | null/None value |
+| waley | nil value |
+| o | Logical OR |
+| at | Logical AND |
+| mama_mo | Logical NOT |
 
 
 ### Operators
@@ -105,7 +108,7 @@ Precedence: 1=loosest
 ## Whitespace and termination
 
 - Whitespace significant: no
-- Statement terminator: --
+- Statement terminator: ;;
 - Block delimiters: curly braces
 - Grouping delimiters: parentheses
 
@@ -121,65 +124,51 @@ changelog.]
 ## Grammar
 
 ```
-function    → "avisala" IDENTIFIER ( var_declare )*
-var_declare → "ang" IDENTIFIER ( "=" expression)?
-expression  → logicalOR 
-logicalOR   → logicalAND (( “o” ) logicalAND )*
-logicalAND  → equality (( “at” ) equality )*
-equality    → comparison ( ( "!=" | "==" ) comparison )*
-comparison  → term ( ( ">" | ">=" | "<" | "<=" ) term )*
-term        → factor ( ( "-" | "+" ) factor )*
-factor      → exponent ( ( "/" | "*" | “%” ) exponent )*
-exponent    → unary ( ( "^" ) exponent ) | unary
-unary       → ( "mama_mo" ) unary | primary
-primary     → NUMBER | STRING | IDENTIFIER |  "omsim" | "nonsince" | "waley" | "(" expression ")"
+program       → declaration* EOF
+
+declaration   → var_decl | func_decl | statement
+var_decl      → "ang" IDENTIFIER "=" expression ";;"
+func_decl      → "avisala" IDENTIFIER "(" parameters? ")" block
+parameters    → IDENTIFIER ( "," IDENTIFIER )*
+
+statement     → expr_stmt
+                | print_stmt 
+                | cond_stmt 
+                | while_stmt 
+                | for_stmt
+                | return_stmt
+                | break_stmt
+                | continue_stmt
+                | block
+expr_stmt     → expression ";;"
+print_stmt    → "sabihinmona" expression ";;"
+cond_stmt     → "pwidi" "(" expression ")" statement
+                ( "piro" "(" expression ")" statement )*
+                ( "dipindi" statement )?
+while_stmt    → "whiletch" "(" expression ")" statement
+for_stmt      → "forda" "(" ( var_decl | expr_stmt | ";;" )
+                 expression? ";;" expression? ")" statement
+return_stmt   → "ohsimon" expression? ";;"
+break_stmt    → "aynakatulog" ";;"
+continue_stmt → "oops" ";;"
+block         → "{" declaration* "}"
+
+expression    → assignment
+assignment    → IDENTIFIER "=" assignment | logicalOR
+logicalOR     → logicalAND ( "o" logicalAND )*
+logicalAND    → equality ( "at" equality )*
+equality      → comparison ( ( "!=" | "==" ) comparison )*
+comparison    → term ( ( ">" | ">=" | "<" | "<=" ) term )*
+term          → factor ( ( "-" | "+" ) factor )*
+factor        → exponent ( ( "/" | "*" | "%" ) exponent )*
+exponent      → unary "^" exponent | unary
+unary         → "mama_mo" unary | primary
+primary       → NUMBER | STRING | IDENTIFIER | "omsim" | "nonsince" | "waley"
+                | func_call | input | "(" expression ")"
+func_call      → "yoohoo" IDENTIFIER "(" arguments? ")"
+arguments     → expression ( "," expression )*
+input         → "imnida" "(" expression? ")"
 ```
-
-<!-- <program> ::= <function>*
-
-<function> ::= "avisala" <function_name> "(" ")" "{" <content_block>* "}"
-
-<function_name> ::= IDENTIFIER
-
-<function_call> ::= "yohoo" <function_name>
-
-<return> ::= "ohsimon" <expression>
-
-<content_block> ::= <assign_var> 
-                  | <function_call>
-                  | <conditional> 
-                  | <loop>
-                  | <loop_ctrl>
-                  | <print>
-                  | <return>
-
-<conditional> ::= <if_statement> <else-if_statement>* <else_statement>?
-
-<if_statement> ::= "pwede" "(" <condition> ")" "{" <content_block>"}"
-
-<else-if_statement> ::= "piro" "(" <condition> ")" "{" <content_block>"}"
-
-<else_statement> ::= "dipindi" "(" <condition> ")" "{" <content_block>"}"
-
-<loop> ::= <for_loop> | <while_loop>
-
-<for_loop> ::= "forda" "(" IDENTIFIER ":" <expression> ":" NUMBER ")" "{" <content_block>* "}" 
-
-<while_loop> ::= "whiletch" "(" <condition> ")" "{" <content_block>* "}"
-
-<loop_ctrl> ::= "aynakatulog" | "oops"
-
-<condition> ::= <expression> COMPARISON OPERATOR | LOGICAL OPERATOR <expression>
-
-<print> ::= "sabihinmona" "(" <expression> ")"
-
-<assign_var> ::= IDENTIFIER "=" <expression>
-
-<expression> ::= <term> (OPERATOR <term>)*
-
-<line_cmt> ::= "SKL:"
-
-<block_cmt> ::= "SKL:" "IYKYK" -->
 
 ## Parse output format
 
