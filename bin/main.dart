@@ -3,8 +3,13 @@ import 'dart:io';
 
 import 'token.dart';
 import 'scanner.dart';
-// import 'parser.dart';
+import 'parser.dart';
 
+
+Never fail_parser(String message) {
+    stderr.writeln('lab2: $message');
+    exit(65);
+}
 
 Never fail_scanner(String message) {
   stderr.writeln('lab1: $message');
@@ -34,14 +39,15 @@ void main(List<String> arguments) {
     } on FileSystemException catch (error) {
       fail("cannot read '$path': ${error.message}");
     }
-  }else{
-    try {
-    final source = File(path).readAsStringSync(encoding: utf8);
-    stdout.write(source);
-    } on FileSystemException catch (error) {
-      fail("cannot read '$path': ${error.message}");
+    }else{
+
+        try {
+        final source = File(path).readAsStringSync(encoding: utf8);
+        stdout.write(source);
+        } on FileSystemException catch (error) {
+        fail("cannot read '$path': ${error.message}");
+        }
     }
-  }
   exit(0);
 }
 
@@ -61,26 +67,26 @@ void runrepl() {
     }
 }
 
-void run(String source, bool replMode) {
+void run(String source, bool replMode, {bool parse = false}) {
     try {
         final scanner = Scanner(source);
         scanner.scanTokens();
-
-        for (final token in scanner.tokens) {  
-            // prints tokens except EOF when error
-            if (scanner.errorFlag && token.type == TokenType.termFile) break;
-            stdout.writeln(token.toString()); 
+        if (!parse) {
+            for (final token in scanner.tokens) {  
+                // prints tokens except EOF when error
+                if (scanner.errorFlag && token.type == TokenType.termFile) break;
+                stdout.writeln(token.toString()); 
+            }
         }
-
-        if (scanner.errorFlag == true) {
-            if (scanner.errorTypes.contains(1) == true) {
+        if (scanner.errorFlag) {
+            if (scanner.errorTypes.contains(1)) {
                 for (final error in scanner.errorLines) {
                     if (error.$1 == 1) {
                         stderr.writeln('lab1: unrecognized character(s) at line ${error.$2}: ${error.$3.trimRight()}');
                     }
                 }
             }
-            if (scanner.errorTypes.contains(2) == true) {
+            if (scanner.errorTypes.contains(2)) {
                 for (final error in scanner.errorLines) {
                     if (error.$1 == 2) {
                         stderr.writeln('lab1: unterminated string(s) at line ${error.$2}: ${error.$3.trimRight()}');
@@ -88,11 +94,28 @@ void run(String source, bool replMode) {
                 }
             }
 
-            if (replMode == false){
-                fail_scanner('tokenization failed.');
+            if (!replMode){
+                fail_scanner('tokenization failed.');   
             }
 
-        }      
+            return;
+        }  
+
+        if (parse) {
+            try {
+                final parser = Parser(scanner.tokens);
+                parser.parse();
+                stdout.writeln(parser.parse());
+            } on ParseError catch (error) {
+                stderr.write('lab2: $error');
+            }
+            
+        }
+
+        if (!replMode){
+            fail_parser('parsing failed.');
+        }  
+
     } catch (error) {
         stderr.write('lab1: $error');
     }
