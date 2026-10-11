@@ -115,7 +115,9 @@ Precedence: 1=loosest
 ## Token output format
 
 ```
-Token(type: TokenType.number, lexeme: 4, literal: 4.0, line: 1) 
+Token(type:TokenType.number_float, lexeme:3.14, literal:3.14, line:1)
+
+Token(type:TokenType.string, lexeme:"next is string", literal:next is string, line:2)
 ```
 
 [What each field means. Frozen as of Lab 1; changes are recorded in the
@@ -311,4 +313,4 @@ approval of your own work.]
 | Activity | What changed in the language |
 |---|---|
 | Lab 1 | added scanner |
-| Lab 2 | added grammar |
+| Lab 2 | added grammar, added parser |
