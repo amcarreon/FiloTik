@@ -1,4 +1,5 @@
 import 'token.dart';
+import 'astnodes.dart';
 
 class ParseError implements Exception {
   final Token token;
@@ -8,10 +9,6 @@ class ParseError implements Exception {
 
 // printStatement, retStatement, condStatement, etc. - AST nodes, wala ko pa nastrt
 
-// separate nalang ni guro ang AST file
-sealed class Statement {}
-
-sealed class Expression {}
 
 
 class Parser {
@@ -66,7 +63,7 @@ class Parser {
   }
 
 // statements
-  Statement _parseDeclaration() {
+  Declaration _parseDeclaration() {
     if(_match([TokenType.varDeclare])) return _parseVarDeclaration(); // "ang"
     if(_match([TokenType.funcDeclare])) return _parseFuncDeclaration(); // "avisala"
     return _parseStatement();
@@ -223,6 +220,7 @@ class Parser {
     return RetStatement(value);
   }
 
+
   List<Statement> _parseBlock() {
     //_consume(TokenType.curlyL, "Expect'${TokenType.curlyL} for function block body'");
 
@@ -241,47 +239,87 @@ class Parser {
   Expression _parseExpression() => _parseAssignment();
 
   Expression _parseAssignment() {
+    // assignment → IDENTIFIER "=" assignment | logicalOR
+    // Start with _parseLogicalOR(); if the left side is an identifier and
+    // an "=" follows, recursively parse the right side as an assignment.
+    final expression = _parseLogicalOR();
 
-  }
+    if (!_match([TokenType.equal])) return expression;
 
-  Expression _parseLeft() {
+    final equals = _previous();
+    final value = _parseAssignment();
 
+    if (expression is! Variable) {
+      throw ParseError(equals, 'Invalid assignment target');
+    }
+
+    return Assignment(expression.name, value);
   }
 
   Expression _parseLogicalOR() {
+    // logicalOR → logicalAND ( "o" logicalAND )*
+    // Parse the first _parseLogicalAND(), then consume repeated logicOr
+    // operators and parse each right operand with _parseLogicalAND().
+    final logic = _parseLogicalAND();
 
+    if (_match([TokenType.logicAnd])) return logic;
+
+    final left =_previous();
+    final right = _peek();
+
+    if (logic is! Logical){{
+       throw ParseError(logic, 'Invalid assignment target');
+    }}
+
+    return Logical() 
   }
 
   Expression _parseLogicalAND() {
-
+    // logicalAND → equality ( "at" equality )*
+    // Parse the first _parseEquality(), then consume repeated logicAnd
+    // operators and parse each right operand with _parseEquality().
   }
 
   Expression _parseEquality() {
-
+    // equality → comparison ( ( "!=" | "==" ) comparison )*
+    // Parse comparison operands and consume TokenType.notEqual or
+    // TokenType.equalEqual between them.
   }
 
   Expression _parseComparison() {
-
+    // comparison → term ( ( ">" | ">=" | "<" | "<=" ) term )*
+    // Parse term operands and consume the four relational operator tokens.
   }
 
   Expression _parseTerm() {
-
+    // term → factor ( ( "-" | "+" ) factor )*
+    // Parse factor operands and consume TokenType.sub or TokenType.add.
   }
 
   Expression _parseFactor() {
-
+    // factor → exponent ( ( "/" | "*" | "%" ) exponent )*
+    // Parse exponent operands and consume TokenType.div, mult, or modulo.
   }
 
   Expression _parseExponent() {
-
+    // exponent → unary "^" exponent | unary
+    // Parse _parseUnary(); for "^", recursively parse the right side with
+    // _parseExponent() so exponentiation remains right-associative.
   }
 
   Expression _parseUnary() {
-
+    // unary → "mama_mo" unary | primary
+    // If TokenType.logicNot is present, recursively parse _parseUnary();
+    // otherwise delegate to _parsePrimary().
   }
 
   Expression _parsePrimary() {
-
+    // primary → NUMBER_FLOAT | NUMBER_INT | STRING | IDENTIFIER
+    //            | "omsim" | "nonsince" | "waley"
+    //            | func_call | input | "(" expression ")"
+    // Consume literals and identifiers directly; delegate funcCall to
+    // _parseFuncCall(), funcScan to _parseInput(), and grouped expressions
+    // to _parseExpression() between parentheses.
   }
 
   Expression _parseFuncCall() {
@@ -301,7 +339,10 @@ class Parser {
   }
 
   List<Expression> _parseArguments() {
-    Final args = <Expression>[_parseExpression()];
+    // arguments → expression ( "," expression )*
+    // Parse one _parseExpression(), then consume each comma and parse the
+    // next expression until the closing parenthesis.
+    final args = <Expression>[_parseExpression()];
 
     // while(_match()) comma ni
       //args.add(_parseExpression());

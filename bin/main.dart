@@ -32,22 +32,28 @@ void main(List<String> arguments) {
   final path = arguments.last;
   final command = arguments.first;
 
-  if (command == '--tokenize'){
+  if (command == '--tokenize') {
     try {
-    final source = File(path).readAsStringSync(encoding: utf8); 
-        run(source, false);
+      final source = File(path).readAsStringSync(encoding: utf8);
+      run(source, false);
     } on FileSystemException catch (error) {
       fail("cannot read '$path': ${error.message}");
     }
-    }else{
-
-        try {
-        final source = File(path).readAsStringSync(encoding: utf8);
-        stdout.write(source);
-        } on FileSystemException catch (error) {
-        fail("cannot read '$path': ${error.message}");
-        }
+  } else if (command == '--parse') {
+    try {
+      final source = File(path).readAsStringSync(encoding: utf8);
+      run(source, false, parse: true);
+    } on FileSystemException catch (error) {
+      fail("cannot read '$path': ${error.message}");
     }
+  } else {
+    try {
+      final source = File(path).readAsStringSync(encoding: utf8);
+      stdout.write(source);
+    } on FileSystemException catch (error) {
+      fail("cannot read '$path': ${error.message}");
+    }
+  }
   exit(0);
 }
 
@@ -104,17 +110,12 @@ void run(String source, bool replMode, {bool parse = false}) {
         if (parse) {
             try {
                 final parser = Parser(scanner.tokens);
-                parser.parse();
                 stdout.writeln(parser.parse());
             } on ParseError catch (error) {
                 stderr.write('lab2: $error');
+                if (!replMode) fail_parser('parsing failed.');
             }
-            
         }
-
-        if (!replMode){
-            fail_parser('parsing failed.');
-        }  
 
     } catch (error) {
         stderr.write('lab1: $error');
