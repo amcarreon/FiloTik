@@ -108,12 +108,16 @@ void run(String source, bool replMode, {bool parse = false}) {
         }  
 
         if (parse) {
-            try {
-                final parser = Parser(scanner.tokens);
-                stdout.writeln(parser.parse());
-            } on ParseError catch (error) {
-                stderr.write('lab2: $error');
+            final parser = Parser(scanner.tokens);
+            final program = parser.parse();
+
+            if (parser.errors.isNotEmpty) {
+                for (final error in parser.errors) {
+                    stderr.writeln('lab2: $error');
+                }
                 if (!replMode) fail_parser('parsing failed.');
+            } else {
+                stdout.writeln(program);
             }
         }
 
