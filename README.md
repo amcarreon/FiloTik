@@ -143,7 +143,7 @@ statement     → expr_stmt
                 | continue_stmt
                 | block
 expr_stmt     → expression ";;"
-print_stmt    → "sabihinmona" expression ";;"
+print_stmt    → "imnida" expression ";;"
 cond_stmt     → "pwidi" "(" expression ")" statement
                 ( "piro" "(" expression ")" statement )*
                 ( "dipindi" statement )?
@@ -165,11 +165,11 @@ term          → factor ( ( "-" | "+" ) factor )*
 factor        → exponent ( ( "/" | "*" | "%" ) exponent )*
 exponent      → unary "^" exponent | unary
 unary         → "mama_mo" unary | primary
-primary       → NUMBER | STRING | IDENTIFIER | "omsim" | "nonsince" | "waley"
+primary       → NUMBER_FLOAT | NUMBER_INT | STRING | IDENTIFIER | "omsim" | "nonsince" | "waley"
                 | func_call | input | "(" expression ")"
 func_call      → "yoohoo" IDENTIFIER "(" arguments? ")"
 arguments     → expression ( "," expression )*
-input         → "imnida" "(" expression? ")"
+input         → "sabihinmona" "(" expression? ")"
 ```
 
 ## Parse output format

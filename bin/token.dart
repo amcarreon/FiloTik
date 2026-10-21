@@ -1,7 +1,7 @@
 enum TokenType {
   // Delimiters
   // Grouping Delimiters
-  parenL, parenR,
+  parenL, parenR, comma,
   // Block Delimiteers
   curlyL, curlyR,
   // Literal Deelimiter
@@ -52,6 +52,7 @@ const Map<String, TokenType> Symbols = {
   // Grouping Delimiters
   "(": TokenType.parenL,
   ")": TokenType.parenR,
+  ",": TokenType.comma,
 
   // Block Delimiters
   "{": TokenType.curlyL,
