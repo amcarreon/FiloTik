@@ -1,0 +1,15 @@
+SKL; equality
+9 == 3 ;;
+0 == 1 == 7 == 8 == 19 ;;
+
+SKL; inequality
+9 != 3 ;;
+0 != 1 != 7 != 8 != 19 ;;
+
+SKL; less than, less than or equal
+9 <= 3 ;;
+0 <= 1 <= 7 <= 8 <= 19 ;;
+
+SKL; more than, more than or equal
+9 >= 3 ;;
+0 >= 1 >= 7 >= 8 >= 19 ;;

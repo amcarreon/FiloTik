@@ -84,7 +84,7 @@ Precedence: 1=loosest
 
 | Kind | Syntax | Produces |
 |---|---|---|
-| number | 42 (int), 3.14 (double) | [what runtime value] |
+| number | 42 (int), 3.14 (float) | [what runtime value] |
 | string | "Uy, Philippines!" | [what runtime value] |
 | boolean | omsim = true, nonsince = false | [what runtime value] |
 | null/None | waley | [what runtime value] |
