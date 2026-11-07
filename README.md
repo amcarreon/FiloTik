@@ -280,6 +280,36 @@ tests/lab1
   tests/lab1/keywords.filo
   tests/lab1/numbers.filo
   tests/lab1/operators.filo
+
+tests/lab2
+  tests/lab2/associativity
+    tests/lab2/associativity/arithmetic_assoc_in_parser.filo
+  tests/lab2/comments
+    tests/lab2/comments/block_comment_at_eof_in_parser.filo
+    tests/lab2/comments/line_comment_at_eof_in_parser.filo
+  tests/lab2/empty
+    tests/lab2/empty/empty.filo
+  tests/lab2/groupings
+    tests/lab2/groupings/arithmetic_groupings_in_parser.filo
+  tests/lab2/literals
+    tests/lab2/literals/bool_in_parser.filo
+    tests/lab2/literals/float_in_parser.filo
+    tests/lab2/literals/int_in_parser.filo
+    tests/lab2/literals/nil_in_parser.filo
+    tests/lab2/literals/string_in_parser.filo
+  tests/lab2/precedence
+    tests/lab2/precedence/long_mixed_ops_in_parser.filo
+    tests/lab2/precedence/precedence_in_parser.filo
+  tests/lab2/rejections
+    tests/lab2/rejections/empty_assignment_in_parser.filo
+    tests/lab2/rejections/empty_left_operand_assignment.filo
+    tests/lab2/rejections/invalid_binary_in_parser.filo
+    tests/lab2/rejections/logical_binary_no_left_in_parser.filo
+    tests/lab2/rejections/logical_binary_no_right_in_parser.filo
+    tests/lab2/rejections/unbalanced_in_parser.filo
+  tests/lab2/unary
+    tests/lab2/unary/chained_unary_in_parser.filo
+  tests/lab2/test.filo
 ```
 
 Run locally with:
@@ -320,3 +350,4 @@ approval of your own work.]
 |---|---|
 | Lab 1 | added scanner |
 | Lab 2 | added grammar, added parser, added ast printer |
+| Lab 3 | |
