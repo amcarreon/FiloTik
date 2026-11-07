@@ -120,8 +120,13 @@ Token(type:TokenType.number_float, lexeme:3.14, literal:3.14, line:1)
 Token(type:TokenType.string, lexeme:"next is string", literal:next is string, line:2)
 ```
 
-[What each field means. Frozen as of Lab 1; changes are recorded in the
-changelog.]
+| Fields | What does it mean? |
+|---|---|
+| `Token()` | each tokens scanned |
+| `type` | token types |
+| `lexeme` | the actual sequence of characters |
+| `literal` | the actual value read by the program |
+| `line` | where the token resides |
 
 ## Grammar
 
@@ -130,7 +135,7 @@ program       → declaration* EOF
 
 declaration   → var_decl | func_decl | statement
 var_decl      → "ang" IDENTIFIER "=" expression ";;"
-func_decl      → "avisala" IDENTIFIER "(" parameters? ")" block
+func_decl     → "avisala" IDENTIFIER "(" parameters? ")" block
 parameters    → IDENTIFIER ( "," IDENTIFIER )*
 
 statement     → expr_stmt
@@ -175,11 +180,11 @@ input         → "sabihinmona" "(" expression? ")"
 ## Parse output format
 
 ```
-(+ 1.0 (* 2.0 3.0))
+(+ 1 (* 2 3))
 ```
 
-- Groupings print as: [form]
-- Numbers print as: [form]
+- Groupings print as: `(grp (+ 4 5))` 
+- Numbers print as: either int `(4)` and float `(4.0)`
 
 ## Semantics
 
@@ -245,6 +250,7 @@ Message format:
 |---|---|
 | lexical error | 65 |
 | syntax error | 65 |
+| parser error | 65 |
 | runtime error | 70 |
 
 
@@ -313,4 +319,4 @@ approval of your own work.]
 | Activity | What changed in the language |
 |---|---|
 | Lab 1 | added scanner |
-| Lab 2 | added grammar, added parser |
+| Lab 2 | added grammar, added parser, added ast printer |
