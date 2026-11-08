@@ -28,9 +28,6 @@ class ASTPrinter() {
     // parsed list
     String print(Program program) => program.declarations.map(_declaration).join('\n');
 
-    // print expression
-    String printExpr(Expression e) => _expression(e);
-
     String _declaration(Declaration d) {
         switch (d) {
             case VarDeclaration node: 
