@@ -1,0 +1,5 @@
+(mama_mo blue)
+(o blue yellow)
+(o (o blue yellow) red)
+(at blue yellow)
+(at (at blue yellow) red)

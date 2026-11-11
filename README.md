@@ -84,7 +84,7 @@ Precedence: 1=loosest
 
 | Kind | Syntax | Produces |
 |---|---|---|
-| number | 42 (int), 3.14 (double) | [what runtime value] |
+| number | 42 (int), 3.14 (float) | [what runtime value] |
 | string | "Uy, Philippines!" | [what runtime value] |
 | boolean | omsim = true, nonsince = false | [what runtime value] |
 | null/None | waley | [what runtime value] |
@@ -120,8 +120,13 @@ Token(type:TokenType.number_float, lexeme:3.14, literal:3.14, line:1)
 Token(type:TokenType.string, lexeme:"next is string", literal:next is string, line:2)
 ```
 
-[What each field means. Frozen as of Lab 1; changes are recorded in the
-changelog.]
+| Fields | What does it mean? |
+|---|---|
+| `Token()` | each tokens scanned |
+| `type` | token types |
+| `lexeme` | the actual sequence of characters |
+| `literal` | the actual value read by the program |
+| `line` | where the token resides |
 
 ## Grammar
 
@@ -130,7 +135,7 @@ program       → declaration* EOF
 
 declaration   → var_decl | func_decl | statement
 var_decl      → "ang" IDENTIFIER "=" expression ";;"
-func_decl      → "avisala" IDENTIFIER "(" parameters? ")" block
+func_decl     → "avisala" IDENTIFIER "(" parameters? ")" block
 parameters    → IDENTIFIER ( "," IDENTIFIER )*
 
 statement     → expr_stmt
@@ -175,11 +180,11 @@ input         → "sabihinmona" "(" expression? ")"
 ## Parse output format
 
 ```
-(+ 1.0 (* 2.0 3.0))
+(+ 1 (* 2 3))
 ```
 
-- Groupings print as: [form]
-- Numbers print as: [form]
+- Groupings print as: `(grp (+ 4 5))` 
+- Numbers print as: either int `(4)` and float `(4.0)`
 
 ## Semantics
 
@@ -245,6 +250,7 @@ Message format:
 |---|---|
 | lexical error | 65 |
 | syntax error | 65 |
+| parser error | 65 |
 | runtime error | 70 |
 
 
@@ -274,6 +280,36 @@ tests/lab1
   tests/lab1/keywords.filo
   tests/lab1/numbers.filo
   tests/lab1/operators.filo
+
+tests/lab2
+  tests/lab2/associativity
+    tests/lab2/associativity/arithmetic_assoc_in_parser.filo
+  tests/lab2/comments
+    tests/lab2/comments/block_comment_at_eof_in_parser.filo
+    tests/lab2/comments/line_comment_at_eof_in_parser.filo
+  tests/lab2/empty
+    tests/lab2/empty/empty.filo
+  tests/lab2/groupings
+    tests/lab2/groupings/arithmetic_groupings_in_parser.filo
+  tests/lab2/literals
+    tests/lab2/literals/bool_in_parser.filo
+    tests/lab2/literals/float_in_parser.filo
+    tests/lab2/literals/int_in_parser.filo
+    tests/lab2/literals/nil_in_parser.filo
+    tests/lab2/literals/string_in_parser.filo
+  tests/lab2/precedence
+    tests/lab2/precedence/long_mixed_ops_in_parser.filo
+    tests/lab2/precedence/precedence_in_parser.filo
+  tests/lab2/rejections
+    tests/lab2/rejections/empty_assignment_in_parser.filo
+    tests/lab2/rejections/empty_left_operand_assignment.filo
+    tests/lab2/rejections/invalid_binary_in_parser.filo
+    tests/lab2/rejections/logical_binary_no_left_in_parser.filo
+    tests/lab2/rejections/logical_binary_no_right_in_parser.filo
+    tests/lab2/rejections/unbalanced_in_parser.filo
+  tests/lab2/unary
+    tests/lab2/unary/chained_unary_in_parser.filo
+  tests/lab2/test.filo
 ```
 
 Run locally with:
@@ -313,4 +349,5 @@ approval of your own work.]
 | Activity | What changed in the language |
 |---|---|
 | Lab 1 | added scanner |
-| Lab 2 | added grammar, added parser |
+| Lab 2 | added grammar, added parser, added ast printer |
+| Lab 3 | |

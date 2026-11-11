@@ -1,0 +1,9 @@
+a o b at c ;;
+a at b o c ;;
+a o b o c ;;
+a at b at c ;;
+a == b at c < d ;;
+mama_mo a at b ;;
+mama_mo(a o b) ;;
+(a o b) at c ;;
+a o b at c == d o mama_mo e at f < g + h * i ;;

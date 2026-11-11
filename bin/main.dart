@@ -4,6 +4,7 @@ import 'dart:io';
 import 'token.dart';
 import 'scanner.dart';
 import 'parser.dart';
+import 'astprinter.dart';
 
 
 Never fail_parser(String message) {
@@ -69,7 +70,9 @@ void runrepl() {
             break; // EOF
         }
 
-        run(line, true);        
+        if (line.trim().isEmpty) continue;
+
+        run(line, true, parse: true);        
     }
 }
 
@@ -117,7 +120,7 @@ void run(String source, bool replMode, {bool parse = false}) {
                 }
                 if (!replMode) fail_parser('parsing failed.');
             } else {
-                stdout.writeln(program);
+                stdout.writeln(ASTPrinter().print(program));
             }
         }
 

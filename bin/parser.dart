@@ -11,9 +11,6 @@ class ParseError implements Exception {
       "'${token.lexeme}': $message";
 }
 
-// printStatement, retStatement, condStatement, etc. - AST nodes, wala ko pa nastrt
-
-
 
 class Parser {
   final List<Token> tokens;
@@ -58,6 +55,7 @@ class Parser {
 // parsing
 
   Program parse() {
+    // program       → declaration* EOF
     final declarations = <Declaration>[];
 
     while (!_isAtEnd()) {
@@ -84,34 +82,34 @@ class Parser {
 
 // statements
   Declaration _parseDeclaration() {
+    // declaration   → var_decl | func_decl | statement 
     if(_match([TokenType.varDeclare])) return _parseVarDeclaration(); // "ang"
     if(_match([TokenType.funcDeclare])) return _parseFuncDeclaration(); // "avisala"
     return _parseStatement();
   }
 
   Declaration _parseVarDeclaration() {
-    //_consume(TokenType.varDeclare, "Expect '${TokenType.varDeclare}'"); // "ang"
+    // var_decl      → "ang" IDENTIFIER "=" expression ";;"
     final name = _consume(TokenType.identifier, "Expect variable name");
-    _consume(TokenType.equal, "Expect '${TokenType.equal}' after variable name");
+    _consume(TokenType.equal, "Expect '=' after variable name");
   
     final init = _parseExpression();
-    _consume(TokenType.termStatement, "Expect '${TokenType.termStatement}' after variable declaration");
+    _consume(TokenType.termStatement, "Expect ';;' after variable declaration");
     
     return VarDeclaration(name, init);
   }
 
   Declaration _parseFuncDeclaration() {
-    //_consume(TokenType.funcDeclare, "Expect '${TokenType.funcDeclare}'"); // "avisala"
+    //_func_decl     → "avisala" IDENTIFIER "(" parameters? ")" block
     final name = _consume(TokenType.identifier, "Expected function name"); 
-    _consume(TokenType.parenL, "Expect '${TokenType.parenL}' after function name"); 
+    _consume(TokenType.parenL, "Expect '(' after function name"); 
     
     final params = <Token>[];
     if (!_check(TokenType.parenR)) params.addAll(_parseParams());
 
-    _consume(TokenType.parenR, "Expect '${TokenType.parenR}' after parameters");
-  
+    _consume(TokenType.parenR, "Expect ')' after parameters");
 
-    _consume(TokenType.curlyL, "Expect '${TokenType.curlyL}' before function block");
+    _consume(TokenType.curlyL, "Expect '{' before function block");
     
     final body = BlockStatement(_parseBlock());
     
@@ -119,9 +117,9 @@ class Parser {
   }
 
   List<Token> _parseParams() {
+    // parameters    → IDENTIFIER ( "," IDENTIFIER )*
     final params = <Token>[_consume(TokenType.identifier, "Expect parameter name"),];
 
-    // unknown char pa ang comma so idk how to continue this part...
     while (_match([TokenType.comma])) {
       params.add(_consume(TokenType.identifier, "Expect parameter name"));
     }
@@ -130,25 +128,46 @@ class Parser {
   }
 
   Statement _parseStatement() {
+    /* statement  → expr_stmt
+                  | print_stmt 
+                  | cond_stmt 
+                  | while_stmt 
+                  | for_stmt
+                  | return_stmt
+                  | break_stmt
+                  | continue_stmt
+                  | block
+    */
+
     if (_match([TokenType.funcPrint])) return _parsePrint();
+
     if (_match([TokenType.condIf])) return _parseCond();
+
     if (_match([TokenType.repWhile])) return _parseWhileLoop();
+
     if (_match([TokenType.repFor])) return _parseForLoop();
+
     if (_match([TokenType.funcReturn])) return _parseReturn();
+
     if (_match([TokenType.repBreak])) {
+      // break_stmt    → "aynakatulog" ";;"
       _consume(TokenType.termStatement, "Expect '${TokenType.termStatement}' after '${TokenType.repBreak}'");
       return BreakStatement();
     }
+
     if (_match([TokenType.repContinue])) {
+      // continue_stmt → "oops" ";;"
       _consume(TokenType.termStatement, "Expect '${TokenType.termStatement}' after '${TokenType.repContinue}'");
       return ContStatement();
     }
+    
     if (_match([TokenType.curlyL])) return BlockStatement(_parseBlock());
 
     return _parseExprStatement();
   }
 
   Statement _parseExprStatement() {
+    // expr_stmt     → expression ";;"
     final expr = _parseExpression();
     _consume(TokenType.termStatement, "Expect '${TokenType.termStatement}' after expression");
 
@@ -156,7 +175,7 @@ class Parser {
   }
 
   Statement _parsePrint() {
-    //_consume(TokenType.funcPrint, "Expect '${TokenType.funcPrint}'");
+    // print_stmt    → "imnida" expression ";;"
     _consume(TokenType.parenL, "Expect '${TokenType.parenL}' after ${TokenType.funcPrint}");
 
     final expr = _parseExpression();
@@ -168,7 +187,10 @@ class Parser {
   }
 
   Statement _parseCond() {
-    //_consume(TokenType.condIf, "Expect'${TokenType.condIf}'");
+    /* cond_stmt  → "pwidi" "(" expression ")" statement
+                  ( "piro" "(" expression ")" statement )*
+                  ( "dipindi" statement )?
+    */
     _consume(TokenType.parenL, "Expect '${TokenType.parenL}' after ${TokenType.condIf}");
     
     final condition = _parseExpression();
@@ -193,7 +215,7 @@ class Parser {
   }
 
   Statement _parseWhileLoop() {
-    //_consume(TokenType.repWhile, "Expect'${TokenType.repWhile}'");
+    // while_stmt    → "whiletch" "(" expression ")" statement
     _consume(TokenType.parenL, "Expect '${TokenType.parenL}' after ${TokenType.repWhile}");
     
     final condition = _parseExpression();
@@ -203,7 +225,9 @@ class Parser {
   }
 
   Statement _parseForLoop() {
-    //_consume(TokenType.repFor, "Expect'${TokenType.repFor}'");
+    /* for_stmt  → "forda" "(" ( var_decl | expr_stmt | ";;" )
+                    expression? ";;" expression? ")" statement
+    */
     _consume(TokenType.parenL, "Expect '${TokenType.parenL}' after ${TokenType.repFor}");
     
     Declaration? init;
@@ -230,7 +254,7 @@ class Parser {
   }
 
   Statement _parseReturn() {
-    //_consume(TokenType.funcReturn, "Expect'${TokenType.funcReturn}'");
+    // return_stmt   → "ohsimon" expression? ";;"
 
     Expression? value;
     
@@ -243,7 +267,7 @@ class Parser {
 
 
   List<Declaration> _parseBlock() {
-    //_consume(TokenType.curlyL, "Expect'${TokenType.curlyL} for function block body'");
+    // block         → "{" declaration* "}"
 
     final contents = <Declaration>[];
 

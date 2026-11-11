@@ -1,0 +1,10 @@
+SKL; logical NOT
+mama_mo blue ;;
+
+SKL; logical OR
+blue o yellow ;;
+blue o yellow o red ;;
+
+SKL; logical AND
+blue at yellow ;;
+blue at yellow at red ;;
